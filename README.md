@@ -1,52 +1,412 @@
 # Nexa Chain - Frontend Dashboard
 
-[cite_start]A premium, responsive React dashboard built for an investment and referral-based platform[cite: 3, 5, 107]. [cite_start]This frontend application handles user interfaces for tracking investments, daily ROI, and multi-level referral networks while maintaining high-quality UI/UX practices[cite: 122].
+A modern investment and referral management dashboard built with **React.js**, **Redux Toolkit (RTK Query)**, **Tailwind CSS**, and **Framer Motion**.
 
-## 🚀 Key Features
+This application serves as the frontend interface for the **Nexa Chain** platform, allowing users to manage investments, track ROI earnings, monitor referral networks, and view wallet balances through a responsive and visually appealing dashboard.
 
-Based on the core project requirements, this dashboard includes:
+---
 
-* [cite_start]**Responsive UI:** A fully responsive React dashboard tailored for both desktop and mobile views[cite: 107].
-* [cite_start]**Key Metrics Display:** Dashboard cards displaying Total Investments, Daily ROI, Total Level Income, and Wallet Balance[cite: 108, 110, 111, 112, 113].
-* [cite_start]**Detailed Histories:** Comprehensive tables for Investment History, ROI History, and Referral Income History[cite: 109, 114, 115, 116].
-* [cite_start]**Referral Matrix:** A visual, nested representation of the referral tree hierarchy[cite: 117, 118].
-* [cite_start]**Visual Data Representation:** Integration of charts for the visual representation of earnings[cite: 122].
-* [cite_start]**Robust State Management:** Seamless API integration with proper handling of loading and error states to ensure a smooth user experience[cite: 120, 121].
+## 🚀 Features
 
-## 🛠️ Tech Stack & Architecture
+### Authentication
 
-* [cite_start]**Framework:** React.js [cite: 5, 107]
-* [cite_start]**Architecture:** Clean code structure focusing on modular and reusable components[cite: 124].
+* User Registration
+* User Login
+* JWT-based Authentication
+* Protected Routes
 
-## ⚙️ Project Setup Steps
+### Dashboard
 
-[cite_start]Follow these steps to run the frontend application locally[cite: 156]:
+* Total Investments Overview
+* Daily ROI Earnings
+* Level Income Tracking
+* Wallet Balance Monitoring
+* Recent Investment Activity
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <your-github-repository-link>
-    cd nexa-chain-frontend
-    ```
+### Investment Management
 
-2.  **Install Dependencies:**
-    ```bash
-    npm install
-    ```
-    *(Note: You can also use `yarn install` or `pnpm install` depending on your package manager).*
+* Create New Investments
+* View Investment History
+* Track ROI Performance
 
-3.  **Configure Environment Variables:**
-    Create a `.env` file in the root directory and add the necessary variables (see the section below).
+### Referral System
 
-4.  **Start the Development Server:**
-    ```bash
-    npm start
-    ```
-    *(or `npm run dev` if using Vite).* The application will typically be available at `http://localhost:3000` or `http://localhost:5173`.
+* Direct Referral Tracking
+* Multi-Level Referral Tree Visualization
+* Level Income History
 
-## 🔐 Environment Variables
+### UI/UX
 
-[cite_start]To successfully connect the frontend to the backend APIs, configure the following environment variable in your `.env` file[cite: 157]:
+* Responsive Design
+* Glassmorphism Components
+* Smooth Framer Motion Animations
+* Mobile-Friendly Layout
+* Modern Fintech/Web3 Inspired Interface
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+* React.js
+* React Router DOM
+* Redux Toolkit
+* RTK Query
+* Tailwind CSS
+* Framer Motion
+* Axios (Optional)
+
+### Backend (Expected)
+
+* Node.js
+* Express.js
+* MongoDB
+* JWT Authentication
+
+---
+
+# 📦 Project Setup
+
+## Prerequisites
+
+Before running the project, ensure you have:
+
+* Node.js (v18+ recommended)
+* npm / yarn / pnpm
+
+---
+
+## Clone Repository
+
+```bash
+git clone <your-frontend-repository-link>
+cd nexa-chain-frontend
+```
+
+---
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## Configure Environment Variables
+
+Create a `.env` file in the root directory:
 
 ```env
-# The base URL for the backend REST APIs (Authentication, Investment, Dashboard, Referral)
 REACT_APP_API_BASE_URL=http://localhost:5000/api
+```
+
+### For Vite Projects
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+---
+
+## Run Development Server
+
+### Create React App
+
+```bash
+npm start
+```
+
+### Vite
+
+```bash
+npm run dev
+```
+
+---
+
+## Build For Production
+
+### Create React App
+
+```bash
+npm run build
+```
+
+### Vite
+
+```bash
+npm run build
+```
+
+---
+
+# 📁 Project Structure
+
+```text
+src/
+│
+├── app/
+│   └── store.js
+│
+├── api/
+│   └── apiSlice.js
+│
+├── features/
+│   ├── auth/
+│   ├── dashboard/
+│   ├── investments/
+│   └── referrals/
+│
+├── components/
+│   ├── common/
+│   ├── layout/
+│   └── charts/
+│
+├── pages/
+│   ├── Login.jsx
+│   ├── Register.jsx
+│   ├── Dashboard.jsx
+│   ├── Investments.jsx
+│   └── Referrals.jsx
+│
+├── routes/
+│   └── ProtectedRoute.jsx
+│
+├── hooks/
+├── utils/
+├── assets/
+└── App.jsx
+```
+
+---
+
+# 🔐 Environment Variables
+
+Create a `.env` file:
+
+```env
+# Backend API URL
+REACT_APP_API_BASE_URL=http://localhost:5000/api
+```
+
+For Vite:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+---
+
+# 📚 API Documentation
+
+The frontend consumes the following backend REST APIs.
+
+## Authentication
+
+### Register User
+
+```http
+POST /auth/register
+```
+
+Request Body:
+
+```json
+{
+  "fullName": "John Doe",
+  "email": "john@example.com",
+  "mobile": "9876543210",
+  "password": "password123",
+  "referralCode": "REF123"
+}
+```
+
+---
+
+### Login User
+
+```http
+POST /auth/login
+```
+
+Response:
+
+```json
+{
+  "token": "jwt-token"
+}
+```
+
+---
+
+## Dashboard
+
+### Get Dashboard Data
+
+```http
+GET /investments/dashboard
+```
+
+Returns:
+
+* Total Investments
+* Daily ROI
+* Level Income
+* Wallet Balance
+* Recent Investments
+
+---
+
+## Investments
+
+### Create Investment
+
+```http
+POST /investments
+```
+
+Request:
+
+```json
+{
+  "planName": "Starter Plan",
+  "amount": 5000,
+  "duration": 30,
+  "roiPercentage": 2
+}
+```
+
+---
+
+### Get Investment History
+
+```http
+GET /investments
+```
+
+---
+
+## Referral & Network
+
+### User Details
+
+```http
+GET /user/details
+```
+
+Returns:
+
+* User Information
+* Direct Referrals
+* Referral Tree
+* Level Income History
+
+---
+
+# 🔑 Authentication Flow
+
+1. User logs in.
+2. Backend returns JWT token.
+3. Token is stored in localStorage.
+4. RTK Query automatically attaches the token to protected requests.
+5. Protected routes verify authentication status before rendering.
+
+Example Authorization Header:
+
+```http
+Authorization: Bearer <jwt-token>
+```
+
+---
+
+# 🎨 Design Decisions
+
+The UI follows a premium fintech dashboard approach with:
+
+* Glassmorphism Design
+* Dark Theme Friendly Components
+* Animated Page Transitions
+* Interactive Referral Tree
+* Reusable UI Components
+* Mobile-First Responsive Layout
+
+---
+
+# 📌 Assumptions
+
+### Backend Contract
+
+The frontend assumes API responses match the interfaces defined within RTK Query slices.
+
+### JWT Authentication
+
+Backend provides valid JWT tokens for protected routes.
+
+### ROI Automation
+
+ROI calculations are managed entirely by the backend scheduler.
+
+### Referral Tree Structure
+
+Backend provides nested referral tree data recursively.
+
+### Route Security
+
+Unauthenticated users are redirected to login pages through Protected Routes.
+
+---
+
+# 🚀 Deployment
+
+Build the application:
+
+```bash
+npm run build
+```
+
+Deploy the generated build folder to:
+
+* Vercel
+* Netlify
+* AWS S3
+* Firebase Hosting
+* Render
+
+---
+
+# 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+
+```bash
+git checkout -b feature/new-feature
+```
+
+3. Commit changes
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push branch
+
+```bash
+git push origin feature/new-feature
+```
+
+5. Open a Pull Request
+
+---
+
+# 📄 License
+
+This project was developed as part of a MERN Stack Technical Assessment and is intended for educational and evaluation purposes.
+
+---
+
+## 👨‍💻 Author
+
+Developed using React.js, RTK Query, Tailwind CSS, and Framer Motion as part of the Nexa Chain investment platform frontend implementation.

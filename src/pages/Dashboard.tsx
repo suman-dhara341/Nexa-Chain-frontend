@@ -12,8 +12,8 @@ import {
   LuHistory,
 } from "react-icons/lu";
 import { useGetDashboardDataQuery } from "../features/investment/investmentApiSlice";
-import Sidebar from "../Component/sideNavbar/Sidebar";
-import TreeNode from "./TreeNode";
+import Sidebar from "../layout/Sidebar";
+import TreeNode from "../Component/TreeNode";
 import { useGetReferralDataQuery } from "../features/referrals/referralApiSlice";
 
 const Dashboard = () => {

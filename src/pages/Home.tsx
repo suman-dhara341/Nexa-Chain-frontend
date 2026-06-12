@@ -22,7 +22,7 @@ import {
   LuBox,
   LuShieldCheck,
 } from "react-icons/lu";
-import Navbar from "./Navbar";
+import Navbar from "../layout/Navbar";
 
 
 type FAQItemProps = {

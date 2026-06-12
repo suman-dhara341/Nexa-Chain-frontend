@@ -10,7 +10,7 @@ import {
 } from "react-icons/lu";
 
 import { useGetDashboardDataQuery } from "../features/investment/investmentApiSlice";
-import Sidebar from "../Component/sideNavbar/Sidebar";
+import Sidebar from "../layout/Sidebar";
 import { useGetReferralDataQuery } from "../features/referrals/referralApiSlice";
 
 const History = () => {

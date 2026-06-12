@@ -1,21 +1,22 @@
 # Nexa Chain - Frontend Dashboard
 
-A modern investment and referral management dashboard built with **React.js**, **Redux Toolkit (RTK Query)**, **Tailwind CSS**, and **Framer Motion**.
+A modern investment and referral management dashboard built with **React.js**, **TypeScript**, **Redux Toolkit (RTK Query)**, **Tailwind CSS**, and **Framer Motion**.
 
 This application serves as the frontend interface for the **Nexa Chain** platform, allowing users to manage investments, track ROI earnings, monitor referral networks, and view wallet balances through a responsive and visually appealing dashboard.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
-### Authentication
+## Authentication
 
 * User Registration
 * User Login
 * JWT-based Authentication
 * Protected Routes
+* Public Route Handling
 
-### Dashboard
+## Dashboard
 
 * Total Investments Overview
 * Daily ROI Earnings
@@ -23,41 +24,43 @@ This application serves as the frontend interface for the **Nexa Chain** platfor
 * Wallet Balance Monitoring
 * Recent Investment Activity
 
-### Investment Management
+## Investment Management
 
 * Create New Investments
 * View Investment History
 * Track ROI Performance
 
-### Referral System
+## Referral System
 
 * Direct Referral Tracking
 * Multi-Level Referral Tree Visualization
 * Level Income History
+* Interactive Referral Tree Component
 
-### UI/UX
+## UI/UX
 
-* Responsive Design
-* Glassmorphism Components
-* Smooth Framer Motion Animations
-* Mobile-Friendly Layout
-* Modern Fintech/Web3 Inspired Interface
+* Fully Responsive Design
+* Modern Dashboard Layout
+* Framer Motion Animations
+* Mobile-Friendly Interface
+* Clean and Reusable Components
 
 ---
 
-## 🛠 Tech Stack
+# 🛠 Tech Stack
 
-### Frontend
+## Frontend
 
 * React.js
-* React Router DOM
+* TypeScript
+* Vite
 * Redux Toolkit
 * RTK Query
+* React Router DOM
 * Tailwind CSS
 * Framer Motion
-* Axios (Optional)
 
-### Backend (Expected)
+## Backend (Expected)
 
 * Node.js
 * Express.js
@@ -96,13 +99,7 @@ npm install
 
 ## Configure Environment Variables
 
-Create a `.env` file in the root directory:
-
-```env
-REACT_APP_API_BASE_URL=http://localhost:5000/api
-```
-
-### For Vite Projects
+Create a `.env` file in the project root:
 
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
@@ -112,32 +109,30 @@ VITE_API_BASE_URL=http://localhost:5000/api
 
 ## Run Development Server
 
-### Create React App
-
-```bash
-npm start
-```
-
-### Vite
-
 ```bash
 npm run dev
+```
+
+The application will run at:
+
+```text
+http://localhost:5173
 ```
 
 ---
 
 ## Build For Production
 
-### Create React App
-
 ```bash
 npm run build
 ```
 
-### Vite
+---
+
+## Preview Production Build
 
 ```bash
-npm run build
+npm run preview
 ```
 
 ---
@@ -145,39 +140,42 @@ npm run build
 # 📁 Project Structure
 
 ```text
-src/
+my-project/
 │
-├── app/
-│   └── store.js
-│
-├── api/
-│   └── apiSlice.js
-│
-├── features/
-│   ├── auth/
-│   ├── dashboard/
-│   ├── investments/
-│   └── referrals/
-│
-├── components/
-│   ├── common/
+├── src/
+│   │
+│   ├── Component/
+│   │   ├── NewInvestment.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   ├── PublicRoute.tsx
+│   │   └── TreeNode.tsx
+│   │
+│   ├── features/
+│   │   ├── api/
+│   │   ├── auth/
+│   │   ├── investment/
+│   │   └── referrals/
+│   │
 │   ├── layout/
-│   └── charts/
+│   │
+│   ├── pages/
+│   │   ├── Dashboard.tsx
+│   │   ├── Home.tsx
+│   │   ├── Investment.tsx
+│   │   ├── Login.tsx
+│   │   ├── Referrals.tsx
+│   │   └── SignUp.tsx
+│   │
+│   ├── App.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   └── store.ts
 │
-├── pages/
-│   ├── Login.jsx
-│   ├── Register.jsx
-│   ├── Dashboard.jsx
-│   ├── Investments.jsx
-│   └── Referrals.jsx
-│
-├── routes/
-│   └── ProtectedRoute.jsx
-│
-├── hooks/
-├── utils/
-├── assets/
-└── App.jsx
+├── .env
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+└── README.md
 ```
 
 ---
@@ -187,14 +185,13 @@ src/
 Create a `.env` file:
 
 ```env
-# Backend API URL
-REACT_APP_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-For Vite:
+Use inside the application:
 
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
+```ts
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 ```
 
 ---
@@ -203,7 +200,7 @@ VITE_API_BASE_URL=http://localhost:5000/api
 
 The frontend consumes the following backend REST APIs.
 
-## Authentication
+## Authentication APIs
 
 ### Register User
 
@@ -241,7 +238,7 @@ Response:
 
 ---
 
-## Dashboard
+## Dashboard APIs
 
 ### Get Dashboard Data
 
@@ -253,13 +250,13 @@ Returns:
 
 * Total Investments
 * Daily ROI
-* Level Income
+* Total Level Income
 * Wallet Balance
 * Recent Investments
 
 ---
 
-## Investments
+## Investment APIs
 
 ### Create Investment
 
@@ -288,7 +285,7 @@ GET /investments
 
 ---
 
-## Referral & Network
+## Referral APIs
 
 ### User Details
 
@@ -298,20 +295,21 @@ GET /user/details
 
 Returns:
 
-* User Information
+* User Profile Information
 * Direct Referrals
-* Referral Tree
+* Referral Tree Structure
 * Level Income History
 
 ---
 
 # 🔑 Authentication Flow
 
-1. User logs in.
-2. Backend returns JWT token.
-3. Token is stored in localStorage.
-4. RTK Query automatically attaches the token to protected requests.
-5. Protected routes verify authentication status before rendering.
+1. User logs in using credentials.
+2. Backend validates the user.
+3. JWT token is returned.
+4. Token is stored in localStorage.
+5. RTK Query automatically attaches the token to authenticated requests.
+6. Protected routes restrict unauthorized access.
 
 Example Authorization Header:
 
@@ -323,75 +321,77 @@ Authorization: Bearer <jwt-token>
 
 # 🎨 Design Decisions
 
-The UI follows a premium fintech dashboard approach with:
+The dashboard follows modern fintech UI principles:
 
-* Glassmorphism Design
-* Dark Theme Friendly Components
-* Animated Page Transitions
+* Responsive Design
+* Modular Component Architecture
+* Reusable Components
+* Smooth Page Transitions
 * Interactive Referral Tree
-* Reusable UI Components
-* Mobile-First Responsive Layout
+* Optimized State Management with Redux Toolkit
+* Type-Safe Development Using TypeScript
 
 ---
 
 # 📌 Assumptions
 
-### Backend Contract
+## Backend Contract
 
-The frontend assumes API responses match the interfaces defined within RTK Query slices.
+The frontend assumes backend responses match the interfaces used within RTK Query.
 
-### JWT Authentication
+## JWT Authentication
 
-Backend provides valid JWT tokens for protected routes.
+The backend provides secure JWT-based authentication.
 
-### ROI Automation
+## ROI Processing
 
-ROI calculations are managed entirely by the backend scheduler.
+ROI calculations are handled entirely by backend cron jobs.
 
-### Referral Tree Structure
+## Referral Tree
 
-Backend provides nested referral tree data recursively.
+The backend provides nested referral data recursively.
 
-### Route Security
+## Route Security
 
-Unauthenticated users are redirected to login pages through Protected Routes.
+Users cannot access dashboard pages without authentication.
 
 ---
 
 # 🚀 Deployment
 
-Build the application:
+Generate a production build:
 
 ```bash
 npm run build
 ```
 
-Deploy the generated build folder to:
+Deploy the generated `dist/` folder to:
 
 * Vercel
 * Netlify
+* Render
 * AWS S3
 * Firebase Hosting
-* Render
 
 ---
 
 # 🤝 Contributing
 
 1. Fork the repository
+
 2. Create a feature branch
 
 ```bash
 git checkout -b feature/new-feature
 ```
 
-3. Commit changes
+3. Commit your changes
 
 ```bash
 git commit -m "Add new feature"
 ```
 
-4. Push branch
+4. Push to GitHub
 
 ```bash
 git push origin feature/new-feature
@@ -399,14 +399,3 @@ git push origin feature/new-feature
 
 5. Open a Pull Request
 
----
-
-# 📄 License
-
-This project was developed as part of a MERN Stack Technical Assessment and is intended for educational and evaluation purposes.
-
----
-
-## 👨‍💻 Author
-
-Developed using React.js, RTK Query, Tailwind CSS, and Framer Motion as part of the Nexa Chain investment platform frontend implementation.

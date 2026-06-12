@@ -8,7 +8,7 @@ import {
   LuCalculator,
   LuRocket,
 } from "react-icons/lu";
-import Sidebar from "../Component/sideNavbar/Sidebar";
+import Sidebar from "../layout/Sidebar";
 
 import { useCreateInvestmentMutation } from "../features/investment/investmentApiSlice";
 
@@ -69,7 +69,7 @@ const NewInvestment = () => {
     },
   ];
 
-  const [selectedPlan, setSelectedPlan] = useState(plans[1]); 
+  const [selectedPlan, setSelectedPlan] = useState(plans[1]);
   const [amount, setAmount] = useState(selectedPlan.minInvest.toString());
 
   const numAmount = parseFloat(amount) || 0;
@@ -78,7 +78,6 @@ const NewInvestment = () => {
 
   const isValidAmount =
     numAmount >= selectedPlan.minInvest && numAmount <= selectedPlan.maxInvest;
-
 
   const handleInvestSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,7 +96,7 @@ const NewInvestment = () => {
       alert(`Successfully staked $${numAmount} in ${selectedPlan.name}!`);
 
       navigate("/investments");
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Investment failed:", error);
       alert(
         error?.data?.message ||
@@ -108,7 +107,7 @@ const NewInvestment = () => {
 
   return (
     <div className="flex h-screen bg-[#F8FAFC] text-slate-700 font-sans selection:bg-blue-600 selection:text-white overflow-hidden">
-      <Sidebar  />
+      <Sidebar />
 
       <main className="flex-1 p-6 md:p-10 overflow-y-auto relative">
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-[120px] pointer-events-none -z-10"></div>

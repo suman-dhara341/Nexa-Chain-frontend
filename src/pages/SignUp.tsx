@@ -10,7 +10,7 @@ import {
   LuArrowRight,
   LuShieldCheck,
 } from "react-icons/lu";
-import { useRegisterMutation } from "../../features/auth/authApiSlice";
+import { useRegisterMutation } from "../features/auth/authApiSlice";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -95,8 +95,6 @@ const Signup = () => {
           className="w-full max-w-md mx-auto lg:ml-auto"
         >
           <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white p-8 sm:p-10 relative overflow-hidden">
-           
-
             <div className="text-center mb-8">
               <h2 className="text-2xl font-black text-slate-900 tracking-tight">
                 Create Account

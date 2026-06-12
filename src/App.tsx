@@ -1,15 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
-import ProtectedRoute from "./Component/ProtectedRoute/ProtectedRoute";
-import PublicRoute from "./Component/ProtectedRoute/PublicRoute";
+import ProtectedRoute from "./Component/ProtectedRoute";
+import PublicRoute from "./Component/PublicRoute";
 
-const Login = lazy(() => import("./Component/login/page"));
-const Signup = lazy(() => import("./Component/signup/page"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/SignUp"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Referrals = lazy(() => import("./pages/Referrals"));
 const Investment = lazy(() => import("./pages/Investment"));
-const NewInvestment = lazy(() => import("./pages/NewInvestment"));
+const NewInvestment = lazy(() => import("./Component/NewInvestment"));
 const Home = lazy(() => import("./pages/Home"));
 
 const App = () => {

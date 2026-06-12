@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { LuCopy, LuCheck, LuUsers, LuNetwork, LuShare2 } from "react-icons/lu";
 
-import Sidebar from "../Component/sideNavbar/Sidebar";
-import TreeNode from "./TreeNode";
+import Sidebar from "../layout/Sidebar";
+import TreeNode from "../Component/TreeNode";
 
 import {
   useGetReferralDataQuery,

@@ -10,11 +10,38 @@ import {
   LuCheck,
   LuCalendarDays,
   LuHistory,
+  
 } from "react-icons/lu";
 import { useGetDashboardDataQuery } from "../features/investment/investmentApiSlice";
 import Sidebar from "../layout/Sidebar";
 import TreeNode from "../Component/TreeNode";
 import { useGetReferralDataQuery } from "../features/referrals/referralApiSlice";
+
+// --- Chart.js Imports ---
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+// Register Chart.js components safely
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend,
+);
 
 const Dashboard = () => {
   const [copied, setCopied] = useState(false);
@@ -50,16 +77,103 @@ const Dashboard = () => {
   const roiHistories = userDetails?.roiHistories || [];
   const referralTree = userDetails?.referralTree || [];
 
+  // =====================================
+  // FIXED: Chart.js Data Aggregation Setup
+  // =====================================
+  // 1. Group and sum ROI amounts by exact Date
+  const aggregatedRoi = roiHistories.reduce((acc: any, roi: any) => {
+    const dateObj = new Date(roi.date || roi.createdAt);
+    // Use an exact YYYY-MM-DD key for proper grouping
+    const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()}-${dateObj.getDate()}`;
+    const amount = Number(roi.roiAmount || roi.amount || 0);
+
+    if (!acc[dateKey]) {
+      acc[dateKey] = {
+        originalDate: dateObj,
+        label: dateObj.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        totalAmount: 0,
+      };
+    }
+    acc[dateKey].totalAmount += amount;
+    return acc;
+  }, {});
+
+  // 2. Convert object to array and sort chronologically
+  const sortedRoiForChart = Object.values(aggregatedRoi).sort(
+    (a: any, b: any) => a.originalDate.getTime() - b.originalDate.getTime(),
+  );
+
+  // 3. Extract labels and values for the chart
+  const chartLabels = sortedRoiForChart.map((item: any) => item.label);
+  const chartDataValues = sortedRoiForChart.map(
+    (item: any) => item.totalAmount,
+  );
+
+  const chartData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        fill: true,
+        label: "Daily ROI",
+        data: chartDataValues,
+        borderColor: "#2563eb",
+        backgroundColor: "rgba(37, 99, 235, 0.1)",
+        borderWidth: 2,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: "#ffffff",
+        pointBorderColor: "#2563eb",
+        pointHoverRadius: 6,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1e293b",
+        padding: 12,
+        titleFont: { size: 13, family: "sans-serif" },
+        bodyFont: { size: 14, weight: "bold" as const, family: "sans-serif" },
+        displayColors: false,
+        callbacks: {
+          label: function (context: any) {
+            return `+$${context.parsed.y.toFixed(2)}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: "#94a3b8", font: { size: 11 } },
+      },
+      y: {
+        border: { display: false },
+        grid: { color: "#f1f5f9" },
+        ticks: {
+          color: "#94a3b8",
+          font: { size: 11 },
+          callback: (value: any) => "$" + value,
+        },
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className="flex h-screen bg-[#F8FAFC] text-slate-700 font-sans selection:bg-blue-600 selection:text-white">
       <Sidebar />
 
-      {/* Main Content: Added pb-24 for mobile bottom nav clearance */}
       <main className="flex-1 p-4 pb-24 md:p-10 md:pb-10 overflow-y-auto relative custom-scrollbar">
-        {/* Background Glow */}
         <div className="absolute top-0 right-1/4 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-blue-100/40 rounded-full blur-[80px] md:blur-[100px] pointer-events-none -z-10"></div>
 
-        {/* Header Section */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-8 md:mb-10">
           <div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -71,7 +185,6 @@ const Dashboard = () => {
           </div>
 
           <div className="hidden md:block md:flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-            {/* Referral Code Box - Now visible and responsive on mobile */}
             <div className="flex justify-between items-center bg-white border border-slate-200/80 rounded-xl p-1.5 shadow-sm w-full sm:w-auto">
               <div className="flex items-center">
                 <span className="px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -103,14 +216,13 @@ const Dashboard = () => {
           </div>
         </header>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-10">
-          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-slate-200/60 transition-all duration-300 group">
+          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
             <div className="flex items-center justify-between mb-4 md:mb-5">
               <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                 Wallet Balance
               </span>
-              <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+              <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
                 <LuWallet size={18} />
               </div>
             </div>
@@ -119,12 +231,12 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-slate-200/60 transition-all duration-300 group">
+          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
             <div className="flex items-center justify-between mb-4 md:mb-5">
               <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                 Active Staked
               </span>
-              <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+              <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
                 <LuTrendingUp size={18} />
               </div>
             </div>
@@ -133,12 +245,12 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-slate-200/60 transition-all duration-300 group">
+          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
             <div className="flex items-center justify-between mb-4 md:mb-5">
               <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                 Total ROI
               </span>
-              <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shadow-inner group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+              <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
                 <LuBadgeDollarSign size={18} />
               </div>
             </div>
@@ -147,12 +259,12 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-slate-200/60 transition-all duration-300 group">
+          <div className="bg-white/80 border border-white/60 rounded-2xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
             <div className="flex items-center justify-between mb-4 md:mb-5">
               <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                 Level Income
               </span>
-              <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl shadow-inner group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+              <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
                 <LuUsers size={18} />
               </div>
             </div>
@@ -162,10 +274,30 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Content Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8 items-start">
-          {/* Left Side: Tables */}
           <div className="xl:col-span-2 space-y-6 md:space-y-8" id="history">
+            {/* 📈 EARNINGS CHART SECTION */}
+            <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.01)] overflow-hidden">
+              <div className="p-4 md:p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 className="text-sm md:text-base font-bold text-slate-800 flex items-center gap-2">
+                  <LuHistory className="text-blue-600" size={18} />
+                  Earnings Trend (Daily ROI)
+                </h3>
+              </div>
+              <div className="p-5 h-[280px] w-full relative">
+                {sortedRoiForChart.length > 0 ? (
+                  <Line data={chartData} options={chartOptions} />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
+                    <LuHistory size={32} className="text-slate-300 mb-2" />
+                    <p className="text-sm font-medium">
+                      Not enough data to display chart
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Investments Table */}
             <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.01)] overflow-hidden">
               <div className="p-4 md:p-5 border-b border-slate-100 bg-white">
@@ -184,7 +316,7 @@ const Dashboard = () => {
                         Amount & ROI
                       </th>
                       <th className="py-3 px-4 md:py-4 md:px-5 whitespace-nowrap">
-                        Duration (Start - End)
+                        Duration
                       </th>
                       <th className="py-3 px-4 md:py-4 md:px-5 whitespace-nowrap">
                         Status
@@ -196,7 +328,7 @@ const Dashboard = () => {
                       investments.map((inv) => (
                         <tr
                           key={inv._id}
-                          className="border-b border-slate-100/70 text-xs md:text-sm text-slate-600 hover:bg-slate-50/80 transition-colors"
+                          className="border-b border-slate-100/70 text-xs md:text-sm text-slate-600 hover:bg-slate-50/80"
                         >
                           <td className="py-3 px-4 md:py-4 md:px-5 font-semibold text-slate-800 whitespace-nowrap">
                             {inv.planDetails}
@@ -237,13 +369,7 @@ const Dashboard = () => {
                           colSpan={4}
                           className="py-10 text-center text-slate-400 text-xs md:text-sm font-medium"
                         >
-                          <div className="flex flex-col items-center justify-center gap-2">
-                            <LuTrendingUp
-                              size={24}
-                              className="text-slate-300"
-                            />
-                            <p>No investment active setup yet.</p>
-                          </div>
+                          No investment active setup yet.
                         </td>
                       </tr>
                     )}
@@ -279,7 +405,7 @@ const Dashboard = () => {
                       roiHistories.map((roi) => (
                         <tr
                           key={roi._id}
-                          className="border-b border-slate-100/70 text-xs md:text-sm text-slate-600 hover:bg-slate-50/80 transition-colors"
+                          className="border-b border-slate-100/70 text-xs md:text-sm text-slate-600 hover:bg-slate-50/80"
                         >
                           <td className="py-3 px-4 md:py-4 md:px-5 text-slate-500 whitespace-nowrap">
                             {new Date(
@@ -302,10 +428,7 @@ const Dashboard = () => {
                           colSpan={3}
                           className="py-10 text-center text-slate-400 text-xs md:text-sm font-medium"
                         >
-                          <div className="flex flex-col items-center justify-center gap-2">
-                            <LuHistory size={24} className="text-slate-300" />
-                            <p>No ROI credited yet.</p>
-                          </div>
+                          No ROI credited yet.
                         </td>
                       </tr>
                     )}
@@ -344,7 +467,7 @@ const Dashboard = () => {
                       referralIncomes.map((inc) => (
                         <tr
                           key={inc._id}
-                          className="border-b border-slate-100/70 text-xs md:text-sm text-slate-600 hover:bg-slate-50/80 transition-colors"
+                          className="border-b border-slate-100/70 text-xs md:text-sm text-slate-600 hover:bg-slate-50/80"
                         >
                           <td className="py-3 px-4 md:py-4 md:px-5 text-slate-400 whitespace-nowrap">
                             {new Date(inc.createdAt).toLocaleDateString()}
@@ -368,10 +491,7 @@ const Dashboard = () => {
                           colSpan={4}
                           className="py-10 text-center text-slate-400 text-xs md:text-sm font-medium"
                         >
-                          <div className="flex flex-col items-center justify-center gap-2">
-                            <LuUsers size={24} className="text-slate-300" />
-                            <p>No matrix tier commissions recorded.</p>
-                          </div>
+                          No matrix tier commissions recorded.
                         </td>
                       </tr>
                     )}
@@ -417,7 +537,6 @@ const Dashboard = () => {
                   <div className="flex flex-col">
                     <div className="bg-[#F8FAFC]/60 rounded-xl md:rounded-2xl p-4 md:p-5 border border-slate-100 shadow-sm backdrop-blur-sm mb-4 md:mb-5 relative overflow-hidden">
                       <div className="absolute bottom-0 left-0 right-0 h-10 md:h-12 bg-gradient-to-t from-[#F8FAFC] to-transparent z-20"></div>
-
                       <div className="relative z-10 max-h-[200px] md:max-h-[250px] overflow-hidden">
                         <TreeNode data={referralTree.slice(0, 2)} />
                       </div>
@@ -437,7 +556,6 @@ const Dashboard = () => {
                   <div className="flex flex-col items-center justify-center text-center py-8 md:py-10 mt-2 md:mt-4">
                     <div className="relative w-20 h-20 md:w-28 md:h-28 mb-4 md:mb-6 flex items-center justify-center">
                       <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-[20px] md:blur-[24px] animate-pulse"></div>
-
                       <div className="relative w-12 h-12 md:w-16 md:h-16 bg-white border border-slate-100 shadow-xl shadow-slate-200/50 rounded-xl md:rounded-2xl flex items-center justify-center -rotate-6 transition-all duration-500 hover:rotate-0 hover:scale-110 cursor-pointer">
                         <LuNetwork
                           size={24}
@@ -445,7 +563,6 @@ const Dashboard = () => {
                         />
                       </div>
                     </div>
-
                     <h4 className="text-base md:text-lg font-black text-slate-800 mb-1.5 md:mb-2 tracking-tight">
                       No Nodes Connected
                     </h4>
